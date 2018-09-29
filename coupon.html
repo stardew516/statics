@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <style>
+        body {
+            background: url('http://yunkus.com/wp-content/themes/zxx/images/T900-500.png') repeat;
+        }
+
+        .coupon {
+            width: 200px;
+            height: 100px;
+            background-image: radial-gradient(transparent 0, transparent 5px, #e24141 5px);
+            background-size: 100px 100px;
+            background-position: 50px 0;
+            position: relative;
+        }
+
+        .coupon:before {
+            content: ' ';
+            display: block;
+            background-color: #e24141;
+            position: absolute;
+            top: 0;
+            bottom: 0;
+            left: 10px;
+            right: 10px;
+            z-index: -1;
+        }
+        .cover{
+            width: 200px;
+            height: 50px;
+            background-image: url('https://avatars3.githubusercontent.com/u/19726808?s=64&v=4');
+            -webkit-clip-path: polygon(50% 0%, 100% 0%, 100% 90%, 99% 91.5%, 98% 95%, 97.5% 100%, 2.5% 100%, 2% 95%, 1% 91.5%, 0% 90%,0% 0%);
+        }
+    </style>
+</head>
+<body>
+<div class="coupon">
+    <div class="cover"></div>
+    优惠券
+</div>
+</body>
+</html>
