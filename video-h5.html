@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <!--允许全屏-->
+    <meta content="yes" name="apple-mobile-web-app-capable" />
+    <meta content="yes" name="apple-touch-fullscreen" />
+    <meta name="data-spm" content="a215s" />
+    <meta content="telephone=no,email=no" name="format-detection" />
+    <meta content="fullscreen=yes,preventMove=no" name="ML-Config" />
+    <meta name="viewport" content="width=device-width,minimum-scale=1.0,maximum-scale=1.0"/>
+    <!--允许全屏-->
+		<link href="https://unpkg.com/video.js@6.11.0/dist/video-js.min.css" rel="stylesheet">
+    <title>h5视频播放</title>
+		<script src="https://cdn.jsdelivr.net/npm/vue"></script>
+		<script src="https://unpkg.com/video.js@6.11.0/dist/video.min.js"></script>
+
+    <style type="text/css">
+      *{
+        margin:0;
+        padding:0;
+        -webkit-tap-highlight-color: rgba(255, 255, 255, 0);
+      }
+      body,html{
+        width: 100%;
+        height: 100%;
+        position: relative;
+      }
+			input, textarea {
+				border: 1px solid #eee;
+				padding: 5px;
+				outline: none;
+				flex: 1;
+			}
+			input:focus, textarea:focus {
+				border: 1px solid #69c1fc;
+			}
+      .font-pf {
+        font-family: PingFangSC-Regular;
+      }
+			.font-pfl {
+				font-family: PingFangSC-Light;
+			}
+			.font-pfm {
+				font-family: PingFangSC-Medium;
+			}
+			.video-js {
+				width: 100%;
+			}
+			/* .vjs-control-bar {
+				display: none !important;
+			} */
+    </style>
+  </head>
+  <body>
+    <div id="app" class="app font-pf">
+			<video id="my-player" ref="myplayer" class="video-js" preload="auto" poster="./oceans.png" data-setup="{}">
+				<source src="./oceans.mp4" type="video/mp4"/>
+				<p class="vjs-no-js">
+					To view this video please enable JavaScript, and consider upgrading to a 	web browser that
+					<a href="http://videojs.com/html5-video-support/" target="_blank">
+						supports HTML5 video
+					</a>
+				</p>
+			</video>
+  	</div>
+  </body>
+	<script type="text/javascript">
+    var app = new Vue({
+      el: '#app',
+      data: {
+				wW: document.body.clientWidth || 375	// 屏幕宽度
+			},
+			watch: {
+			},
+      methods: {
+      },
+      mounted () {
+				let myplayer = this.$refs.myplayer
+				console.log(myplayer, myplayer.width, myplayer.height)
+				window.HELP_IMPROVE_VIDEOJS = false
+				var options = {
+					controls: false
+				}
+				options.autoSetup = false
+				var player = videojs('my-player', options, function onPlayerReady() {
+					videojs.log('Your player is ready!')
+					this.play()
+					this.on('ended', function() {
+						videojs.log('Awww...over so soon?!')
+					})
+				})
+      }
+    })
+  </script>
+
+</html>
