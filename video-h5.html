@@ -26,15 +26,6 @@
         height: 100%;
         position: relative;
       }
-			input, textarea {
-				border: 1px solid #eee;
-				padding: 5px;
-				outline: none;
-				flex: 1;
-			}
-			input:focus, textarea:focus {
-				border: 1px solid #69c1fc;
-			}
       .font-pf {
         font-family: PingFangSC-Regular;
       }
@@ -47,47 +38,144 @@
 			.video-js {
 				width: 100%;
 			}
-			/* .vjs-control-bar {
-				display: none !important;
-			} */
+			.video-h5 {
+				width: 100%;
+				height: auto;
+				position: relative;
+			}
+			.default-img {
+				width: 100%;
+				height: 210px;
+				background-color: #fafafa;
+			}
+			.video-h5-full {
+				position: fixed;
+				top: 0;
+				left: 0;
+				transform-origin: center center;
+			}
+			.video-h5-play {
+				position: absolute;
+				top: 50%;
+				left: 50%;
+				transform: translate(-50%, -50%);
+				z-index: 0;
+				color: #fff;
+				width: 80px;
+				height: 40px;
+				border: 2px solid #fff;
+				border-radius: 8px;
+				text-align: center;
+				line-height: 40px;
+				background-color: transparent;
+				font-size: 24px;
+			}
+			.video-h5-hide {
+				display: none;
+			}
+			.my-player-dimensions {
+				width: 100%;
+				height: 100%;
+			}
     </style>
   </head>
   <body>
     <div id="app" class="app font-pf">
-			<video id="my-player" ref="myplayer" class="video-js" preload="auto" poster="./oceans.png" data-setup="{}">
-				<source src="./oceans.mp4" type="video/mp4"/>
-				<p class="vjs-no-js">
-					To view this video please enable JavaScript, and consider upgrading to a 	web browser that
-					<a href="http://videojs.com/html5-video-support/" target="_blank">
-						supports HTML5 video
-					</a>
-				</p>
-			</video>
+			<div class="video-h5" v-for="(item, index) in videos" :key="index">
+				<div class="video-h5-play" @click="play(item.src, item.poster)">▶</div>
+				<img :src="item.poster||defaultImg" width="100%"/>
+			</div>
+			<div class="video-h5-full" :class="{'video-h5-hide': videoH5Show}" :style="{width: wH+'px', height: wW+'px', transform: trans, '-webkit-transform': trans}">
+				<video id="my-player" class="video-js" preload="auto" poster="" data-setup="{}" playsinline>
+					<source :src="videoing.src" type="video/mp4"/>
+					<p class="vjs-no-js"><a href="http://videojs.com/html5-video-support/" target="_blank">查看支持情况</a></p>
+				</video>
+			</div>
+			
   	</div>
   </body>
 	<script type="text/javascript">
+		// VideoH5.install = function (Vue, options) {
+		// 	// 1. 添加全局方法或属性
+		// 	Vue.myGlobalMethod = function () {
+		// 		// 逻辑...
+		// 	}
+
+		// 	// 2. 添加全局资源
+		// 	Vue.directive('my-directive', {
+		// 		bind (el, binding, vnode, oldVnode) {
+		// 			// 逻辑...
+		// 		}
+		// 		// ...
+		// 	})
+
+		// 	// 3. 注入组件
+		// 	Vue.mixin({
+		// 		created: function () {
+		// 			// 逻辑...
+		// 		}
+		// 		// ...
+		// 	})
+
+		// 	// 4. 添加实例方法
+		// 	Vue.prototype.$myMethod = function (methodOptions) {
+		// 		// 逻辑...
+		// 	}
+		// }
+
     var app = new Vue({
       el: '#app',
       data: {
-				wW: document.body.clientWidth || 375	// 屏幕宽度
+				defaultImg: 'http://t1.aixinxi.net/o_1crk3n0l61dkr1clj1225185a6eta.jpg-w.jpg',
+				wW: document.body.clientWidth || 375,	// 屏幕宽度
+				wH: document.body.clientHeight || 667,
+				trans: '',
+				videoEl: '',
+				videoH5Show: true,
+				videoing: {src: '', poster: ''},
+				videos: [
+					{src: 'http://www.w3school.com.cn/i/movie.ogg', poster: ''},
+					{src: 'http://www.runoob.com/try/demo_source/mov_bbb.mp4', poster: ''},
+					{src: 'http://video.kaishiba.com/iPgzfOjmgRFhpep7yrTYJsdxg9s=/ltQC0in6J46aSxAtQWbpDtZBIiXu', poster: 'http://images.kaishiba.com/o_1d0aga24d1m1ig7d1hka1k7cn919.jpg?imageView2/1/w/900/h/506'},
+					{src: 'http://video.kaishiba.com/iPgzfOjmgRFhpep7yrTYJsdxg9s=/liOqcXG8am80Gt5UniwCI2QzGjCn', poster: 'http://images.kaishiba.com/o_1cvn9hp5v9b8h2g1c1l19bbc3t1e.jpg?imageView2/1/w/900/h/506'},
+					{src: 'http://video.kaishiba.com/iPgzfOjmgRFhpep7yrTYJsdxg9s=/luQY7n5mbNDPu6AJHtK0oxUsxfeK', poster: 'http://images.kaishiba.com/o_1d0e23sns1sut3i8qsjme516as1e.jpg?imageView2/1/w/900/h/506'}
+				]
 			},
 			watch: {
 			},
       methods: {
+				play (src, poster) {
+					this.videoH5Show = false
+					this.videoing.src = src
+					this.videoing.poster = poster
+					this.videoEl.src(src)
+					this.videoEl.poster(poster)
+					this.videoEl.load(src)
+					console.log(src, poster)
+					this.videoEl.play()
+				}
       },
+			created () {
+				this.videoing = this.videos[0]
+			},
       mounted () {
 				let myplayer = this.$refs.myplayer
-				console.log(myplayer, myplayer.width, myplayer.height)
-				window.HELP_IMPROVE_VIDEOJS = false
+				let $t = this
+				let trans = (this.wH - this.wW) / 2
+				this.trans = 'translateX(-' + trans + 'px) translateY(' + trans + 'px) rotate(90deg)'
 				var options = {
-					controls: false
+					controls: false,
+					autoplay: true,
+					isFullscreen: true
 				}
-				options.autoSetup = false
 				var player = videojs('my-player', options, function onPlayerReady() {
-					videojs.log('Your player is ready!')
-					this.play()
+					$t.videoEl = this
+					videojs.log('ready!')
 					this.on('ended', function() {
-						videojs.log('Awww...over so soon?!')
+						videojs.log('over!')
+						$t.videoH5Show = true
+						$t.videoing.src = ''
+						$t.videoing.poster = ''
 					})
 				})
       }
