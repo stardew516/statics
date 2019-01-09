@@ -53,20 +53,22 @@
 				top: 0;
 				left: 0;
 				transform-origin: center center;
+				transition: all ease .3s;
+				overflow: hidden;
 			}
 			.video-h5-play {
 				position: absolute;
 				top: 50%;
 				left: 50%;
-				transform: translate(-50%, -50%);
+				transform: translate(-50%, -50%) rotate(90deg);
 				z-index: 0;
 				color: #fff;
-				width: 80px;
-				height: 40px;
+				width: 40px;
+				height: 80px;
 				border: 2px solid #fff;
 				border-radius: 8px;
 				text-align: center;
-				line-height: 40px;
+				line-height: 80px;
 				background-color: transparent;
 				font-size: 24px;
 			}
@@ -77,17 +79,20 @@
 				width: 100%;
 				height: 100%;
 			}
+			video {width: 1px;display: blcok;}
     </style>
   </head>
   <body>
     <div id="app" class="app font-pf">
 			<div class="video-h5" v-for="(item, index) in videos" :key="index">
-				<div class="video-h5-play" @click="play(item.src, item.poster)">▶</div>
+				<div class="video-h5-play" @click="play(item.src, item.poster)">▲</div>
 				<img :src="item.poster||defaultImg" width="100%"/>
 			</div>
-			<div class="video-h5-full" :class="{'video-h5-hide': videoH5Show}" :style="{width: wH+'px', height: wW+'px', transform: trans, '-webkit-transform': trans}">
-				<video id="my-player" class="video-js" preload="auto" poster="" data-setup="{}" playsinline>
-					<source :src="videoing.src" type="video/mp4"/>
+			<div class="video-h5-full" :class="{'video-h5-hide': videoH5Hide}" :style="{width: wH+'px', height: wW+'px', transform: trans, '-webkit-transform': trans}">
+				<video :src="videoing.src" id="my-player" class="video-js" controls="false" preload="auto" poster="" data-setup="{}" webkit-playsinline playsinline x5-playsinline x-webkit-airplay="allow">
+					<!-- <source :src="videoing.src" type="video/mp4"/>
+					<source :src="videoing.src" type="video/webm"/>
+					<source :src="videoing.src" type="video/ogg"/> -->
 					<p class="vjs-no-js"><a href="http://videojs.com/html5-video-support/" target="_blank">查看支持情况</a></p>
 				</video>
 			</div>
@@ -130,51 +135,64 @@
 				wH: document.body.clientHeight || 667,
 				trans: '',
 				videoEl: '',
-				videoH5Show: true,
+				videoH5Hide: true,
 				videoing: {src: '', poster: ''},
 				videos: [
-					{src: 'http://www.w3school.com.cn/i/movie.ogg', poster: ''},
-					{src: 'http://www.runoob.com/try/demo_source/mov_bbb.mp4', poster: ''},
-					{src: 'http://video.kaishiba.com/iPgzfOjmgRFhpep7yrTYJsdxg9s=/ltQC0in6J46aSxAtQWbpDtZBIiXu', poster: 'http://images.kaishiba.com/o_1d0aga24d1m1ig7d1hka1k7cn919.jpg?imageView2/1/w/900/h/506'},
-					{src: 'http://video.kaishiba.com/iPgzfOjmgRFhpep7yrTYJsdxg9s=/liOqcXG8am80Gt5UniwCI2QzGjCn', poster: 'http://images.kaishiba.com/o_1cvn9hp5v9b8h2g1c1l19bbc3t1e.jpg?imageView2/1/w/900/h/506'},
-					{src: 'http://video.kaishiba.com/iPgzfOjmgRFhpep7yrTYJsdxg9s=/luQY7n5mbNDPu6AJHtK0oxUsxfeK', poster: 'http://images.kaishiba.com/o_1d0e23sns1sut3i8qsjme516as1e.jpg?imageView2/1/w/900/h/506'}
+					{src: 'http://video.kaishiba.com/activity/a1.mp4', poster: 'http://images.kaishiba.com//activity/a1.jpeg?imageView2/1/w/900/h/506'},
+					{src: 'http://video.kaishiba.com/activity/a2.mp4', poster: 'http://images.kaishiba.com//activity/a2.jpeg?imageView2/1/w/900/h/506'},
+					{src: 'http://video.kaishiba.com/activity/a3.mp4', poster: 'http://images.kaishiba.com//activity/a3.jpeg?imageView2/1/w/900/h/506'},
+					{src: 'http://video.kaishiba.com/activity/a4.mp4', poster: 'http://images.kaishiba.com//activity/a4.jpeg?imageView2/1/w/900/h/506'},
+					{src: './oceans.mp4', poster: './oceans.png'}
 				]
 			},
 			watch: {
 			},
       methods: {
+				// 播放视频
 				play (src, poster) {
-					this.videoH5Show = false
+					this.videoH5Hide = false
+					this.noScroll()
 					this.videoing.src = src
 					this.videoing.poster = poster
 					this.videoEl.src(src)
 					this.videoEl.poster(poster)
 					this.videoEl.load(src)
-					console.log(src, poster)
 					this.videoEl.play()
+				},
+				// 开启滚动 
+				scroller () { 
+					document.documentElement.style.overflow = 'auto'
+					document.body.style.position = 'relative'
+				},
+				// 禁止滚动
+				noScroll () {
+					document.documentElement.style.overflow = 'hidden'
+					document.body.style.position = 'fixed'
 				}
       },
 			created () {
-				this.videoing = this.videos[0]
+				// 初始化 默认播放视频
+				this.videoing.src = this.videos[0].src
+				this.videoing.poster = this.videos[0].poster
 			},
       mounted () {
-				let myplayer = this.$refs.myplayer
-				let $t = this
-				let trans = (this.wH - this.wW) / 2
-				this.trans = 'translateX(-' + trans + 'px) translateY(' + trans + 'px) rotate(90deg)'
+				var myplayer = this.$refs.myplayer
+				var $t = this
+				var trans = (this.wH - this.wW) / 2
  				var options = {
 					controls: false,
 					autoplay: true,
 					isFullscreen: true
  				}
+				document.querySelector('video').webkitPlaysinline
+				this.trans = 'translateX(-' + trans + 'px) translateY(' + trans + 'px) rotate(90deg)'
 				var player = videojs('my-player', options, function onPlayerReady() {
 					$t.videoEl = this
 					videojs.log('ready!')
  					this.on('ended', function() {
 						videojs.log('over!')
-						$t.videoH5Show = true
-						$t.videoing.src = ''
-						$t.videoing.poster = ''
+						$t.videoH5Hide = true
+						$t.scroller()
 					})
 				})
       }
